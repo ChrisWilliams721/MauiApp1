@@ -1,0 +1,129 @@
+﻿@page "/addcustomer"
+@using MauiApp1.Components
+<h3>Customers</h3>
+@if (customers.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>VAT_ID_number</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Surname</td>
+                    <td>@customer.VAT_ID_number</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone_Number</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => DeleteCustomer(customer)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    <p @>No customers found.</p>
+}
+
+<button @onclick="LoadCustomersToFile" class="btn btn-primary" disabled="@customersLoaded">
+    @if (customersLoaded)
+    {
+        <span></span>
+    }
+    else
+    {
+        <span>Show All</span>
+    }
+</button>
+<h3>AddCustomer</h3>
+<EditForm Model="@newCustomer" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <InputText id="name" @bind-Value="newCustomer.Name" class="form-control" />
+    </div>
+    <!-- Add other input fields for Surname, VAT_ID_number, Email, Phone_Number, etc. -->
+    <div class="form-group">
+        <label for="name">Surname:</label>
+        <InputText id="name" @bind-Value="newCustomer.Surname" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">VAT_ID_number:</label>
+        <InputText id="VAT_ID_number" @bind-Value="newCustomer.VAT_ID_numberToString" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Email:</label>
+        <InputText id="name" @bind-Value="newCustomer.Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Phone Number:</label>
+        <InputText id="name" @bind-Value="newCustomer.Phone_NumberToString" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+   
+</EditForm>
+
+@code {
+    private Customer newCustomer = new Customer();
+    private List<Customer> customers = new List<Customer>();
+
+
+
+    private void HandleValidSubmit()
+    {
+        customers.Add(newCustomer);
+        SaveCustomersToFile(customers);
+        newCustomer = new Customer();
+    }
+
+    private void SaveCustomersToFile(List<Customer> customers)
+    {
+        string filePath = @"C:\Users\wchri\OneDrive\Documents\Visual Studio 2022\MauiApp1\MauiApp1\customers.txt";
+        using StreamWriter writer = new StreamWriter(filePath);
+        foreach (var customer in customers)
+        {
+            writer.WriteLine($"{customer.Name},{customer.Surname},{customer.VAT_ID_number},{customer.Current_Date},{customer.Email},{customer.Phone_Number}");
+        }
+    }
+    private bool customersLoaded = false;
+    public void LoadCustomersToFile()
+    {
+        string filePath = @"C:\Users\wchri\OneDrive\Documents\Visual Studio 2022\MauiApp1\MauiApp1\customers.txt";
+        if (File.Exists(filePath))
+        {
+            using StreamReader reader = new StreamReader(filePath);
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                var parts = line.Split(',');
+                customers.Add(new Customer
+                {
+                    Name = parts[0],
+                    Surname = parts[1],
+                    VAT_ID_number = int.Parse(parts[2]),
+                    Current_Date = DateTime.Parse(parts[3]),
+                    Email = parts[4],
+                    Phone_Number = int.Parse(parts[5])
+                });
+            }
+        }
+        customersLoaded = true;
+    }
+    private void DeleteCustomer(Customer customer)
+    {
+        customers.Remove(customer);
+        SaveCustomersToFile(customers);
+    }
+    
+}

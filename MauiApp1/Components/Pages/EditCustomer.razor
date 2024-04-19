@@ -1,0 +1,86 @@
+﻿@page "/editcustomer"
+@using MauiApp1.Components
+<h3>EditCustomer</h3>
+
+@if (existCustomer != null)
+{
+    <EditForm Model="@existCustomer" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <InputText id="name" @bind-Value="existCustomer.Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="name">Surname:</label>
+            <InputText id="name" @bind-Value="existCustomer.Surname" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="name">VAT_ID_number:</label>
+            <InputText id="VAT_ID_number" @bind-Value="existCustomer.VAT_ID_numberToString" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="name">Email:</label>
+            <InputText id="name" @bind-Value="existCustomer.Email" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="name">Phone Number:</label>
+            <InputText id="name" @bind-Value="existCustomer.Phone_NumberToString" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+    
+
+
+@code {
+ private Customer existCustomer = new Customer();
+
+    // Implement logic to load existing customer data for editing
+    protected override void OnInitialized()
+    {
+        // Load existing customer data here (e.g., from a file)
+        LoadCustomerForEditing();
+    }
+    private void LoadCustomerForEditing()
+    {
+        string filePath = @"C:\Users\wchri\OneDrive\Documents\Visual Studio 2022\MauiApp1\MauiApp1\customers.txt";
+        if (File.Exists(filePath))
+        {
+            using StreamReader reader = new StreamReader(filePath);
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                var parts = line.Split(',');
+                // Assuming the first customer from the file is loaded for editing
+                existCustomer = new Customer
+                    {
+                        Name = parts[0],
+                        Surname = parts[1],
+                        VAT_ID_number = int.Parse(parts[2]),
+                        Current_Date = DateTime.Parse(parts[3]),
+                        Email = parts[4],
+                        Phone_Number = int.Parse(parts[5])
+                    };
+                break; // Load only the first customer for editing
+            }
+        }
+    }
+    private void HandleValidSubmit()
+    {
+        // Implement logic to save the edited customer data
+        SaveEditedCustomer(existCustomer);
+    }
+    private void SaveEditedCustomer(Customer editedCustomer)
+    {
+        // Implement logic to save the edited customer data (e.g., overwrite in the file)
+        string filePath = @"C:\Users\wchri\OneDrive\Documents\Visual Studio 2022\MauiApp1\MauiApp1\customers.txt";
+        using StreamWriter writer = new StreamWriter(filePath);
+        writer.WriteLine($"{editedCustomer.Name},{editedCustomer.Surname},{editedCustomer.VAT_ID_number},{editedCustomer.Current_Date},{editedCustomer.Email},{editedCustomer.Phone_Number}");
+    }
+
+}
