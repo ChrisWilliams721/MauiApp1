@@ -11,20 +11,76 @@
                 <th>VAT_ID_number</th>
                 <th>Email</th>
                 <th>Phone Number</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var customer in customers)
             {
                 <tr>
-                    <td>@customer.Name</td>
-                    <td>@customer.Surname</td>
-                    <td>@customer.VAT_ID_number</td>
-                    <td>@customer.Email</td>
-                    <td>@customer.Phone_Number</td>
                     <td>
-                        <button class="btn btn-danger" @onclick="() => DeleteCustomer(customer)">Delete</button>
+                        @if (editTarget == customer)
+                        {
+                            <InputText @bind-Value="customer.Name" class="form-control" />
+                        }
+                        else
+                        {
+                            @customer.Name
+                        }
                     </td>
+<td>
+                        @if (editTarget == customer)
+                        {
+                            <InputText @bind-Value="customer.Surname" class="form-control" />
+                        }
+                        else
+                        {
+                            @customer.Surname
+                        }
+                    </td>
+<td>
+                        @if (editTarget == customer)
+                        {
+                            <InputText @bind-Value="customer.VAT_ID_numberToString" class="form-control" />
+                        }
+                        else
+                        {
+                            @customer.VAT_ID_number
+                        }
+                    </td>
+<td>
+                        @if (editTarget == customer)
+                        {
+                            <InputText @bind-Value="customer.Email" class="form-control" />
+                        }
+                        else
+                        {
+                            @customer.Email
+                        }
+                    </td>
+                    <td>
+                        @if (editTarget == customer)
+                        {
+                            <InputText @bind-Value="customer.Phone_NumberToString" class="form-control" />
+                        }
+                        else
+                        {
+                            @customer.Phone_Number
+                        }
+                    </td>
+<td>
+                        @if (editTarget == customer)
+                        {
+                            <button @onclick="() => UpdateCustomer(customer)" class="btn btn-primary">Save</button>
+                            <button @onclick="CancelEdit" class="btn btn-secondary">Cancel</button>
+                        }
+                        else
+                        {
+                            <button @onclick="() => EditCustomer(customer)" class="btn btn-primary">Edit</button>
+                            <button @onclick="() => DeleteCustomer(customer)" class="btn btn-danger">Delete</button>
+                        }
+</td>
+
                 </tr>
             }
         </tbody>
@@ -77,6 +133,9 @@
 @code {
     private Customer newCustomer = new Customer();
     private List<Customer> customers = new List<Customer>();
+    private Customer editTarget = null;
+    private bool customersLoaded = false;
+
 
 
 
@@ -96,7 +155,6 @@
             writer.WriteLine($"{customer.Name},{customer.Surname},{customer.VAT_ID_number},{customer.Current_Date},{customer.Email},{customer.Phone_Number}");
         }
     }
-    private bool customersLoaded = false;
     public void LoadCustomersToFile()
     {
         string filePath = @"C:\Users\wchri\OneDrive\Documents\Visual Studio 2022\MauiApp1\MauiApp1\customers.txt";
@@ -120,10 +178,23 @@
         }
         customersLoaded = true;
     }
+    private void EditCustomer(Customer customer)
+    {
+        editTarget = customer;
+    }
+    private void UpdateCustomer(Customer customer)
+    {
+        editTarget = null;
+        SaveCustomersToFile(customers);
+    }
     private void DeleteCustomer(Customer customer)
     {
         customers.Remove(customer);
         SaveCustomersToFile(customers);
+    }
+    private void CancelEdit()
+    {
+        editTarget = null;
     }
     
 }
