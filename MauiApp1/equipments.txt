@@ -1,0 +1,5 @@
+Hammer Drill,101,10,25,Powerful drill for concrete and masonry
+Chainsaw,201,20,49,Gas-powered chainsaw for cutting wood
+Lawn mower,202,20,19,Self-propelled lawn mower with mulching function
+Small Compressor,301,30,14,5 Gallon Compressor-Portable
+Brad Nailer,50,501,10,Brad Nailer. Requires 3/4 to 1 1/2 Brad Nails

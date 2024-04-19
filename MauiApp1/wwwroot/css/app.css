@@ -68,6 +68,45 @@ h1:focus {
 .status-bar-safe-area {
     display: none;
 }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif; 
+    background-color: #f4f4f4; 
+    color: #333; 
+}
+
+
+img {
+        max-width: 100px; 
+        display: block;
+        margin: 0 auto; 
+        
+    }
+
+h1 {
+    font-size: 2em; 
+    margin-left: 10px; 
+}
+
+main {
+    padding: 20px; 
+}
+
+section {
+    margin-bottom: 20px; 
+}
+
+footer {
+    background-color: #333; 
+    color: #fff; 
+    text-align: center; 
+    padding: 10px; 
+
 
 @supports (-webkit-touch-callout: none) {
     .status-bar-safe-area {
