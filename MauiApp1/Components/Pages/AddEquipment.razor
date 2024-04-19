@@ -11,6 +11,7 @@
                 <th>Category</th>
                 <th>Daily Rate</th>
                 <th>Description</th>
+                <th>Action</th>
                 
             </tr>
         </thead>
@@ -18,14 +19,69 @@
             @foreach (var equipment in equipments)
             {
                 <tr>
-                    <td>@equipment.Equipment_Name</td>
-                    <td>@equipment.Equipment_ID</td>
-                    <td>@equipment.Category_ID</td>
-                    <td>@equipment.Daily_Rate</td>
-                    <td>@equipment.Description</td>
                     <td>
-                        <button class="btn btn-danger" @onclick="() => DeleteEquipment(equipment)">Delete</button>
+                        @if (equipment == editTarget)
+                        {
+                            <InputText @bind-Value="equipment.Equipment_Name" class="form-control" />
+                        }
+                        else
+                        {
+                            @equipment.Equipment_Name
+                        }
                     </td>
+                    <td>
+                        @if (equipment == editTarget)
+                        {
+                            <InputText @bind-Value="equipment.Equipment_IDToString" class="form-control" />
+                        }
+                        else
+                        {
+                            @equipment.Equipment_ID
+                        }
+                    </td>
+                    <td>
+                        @if (equipment == editTarget)
+                        {
+                            <InputText @bind-Value="equipment.Category_IDToString" class="form-control" />
+                        }
+                        else
+                        {
+                            @equipment.Equipment_Name
+                        }
+                    </td>
+                    <td>
+                        @if (equipment == editTarget)
+                        {
+                            <InputText @bind-Value="equipment.Daily_RateToString" class="form-control" />
+                        }
+                        else
+                        {
+                            @equipment.Equipment_Name
+                        }
+                    </td>
+                    <td>
+                        @if (equipment == editTarget)
+                        {
+                            <InputText @bind-Value="equipment.Description" class="form-control" />
+                        }
+                        else
+                        {
+                            @equipment.Equipment_Name
+                        }
+                    </td>
+                    <td>
+                        @if (equipment == editTarget)
+                        {
+                            <button class="btn btn-primary" @onclick="() => UpdateEquipment(equipment)">Save</button>
+                            <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" @onclick="() => EditEquipment(equipment)">Edit</button>
+                            <button class="btn btn-danger" @onclick="() => DeleteEquipment(equipment)">Delete</button>
+                        }
+                    </td>
+                    
                 </tr>
             }
         </tbody>
@@ -76,6 +132,7 @@
 @code {
     private Equipment newEquipment = new Equipment();
     private List<Equipment> equipments = new List<Equipment>();
+    private Equipment editTarget = null;
     private bool equipmentsLoaded = false;
 
     private void HandleValidSubmit()
@@ -93,8 +150,8 @@
             writer.WriteLine($"{equipment.Equipment_Name},{equipment.Equipment_ID},{equipment.Category_ID},{equipment.Daily_Rate},{equipment.Description}");
         }
     }
-    
-    
+
+
     public void LoadEquipmentsToFile()
     {
         string filePath = @"C:\Users\wchri\OneDrive\Documents\Visual Studio 2022\MauiApp1\MauiApp1\equipments.txt";
@@ -112,16 +169,29 @@
                     Category_ID = int.Parse(parts[2]),
                     Daily_Rate = int.Parse(parts[3]),
                     Description = parts[4],
-                    
+
                 });
-                
+
             }
         }
         equipmentsLoaded = true;
+    }
+    private void EditEquipment(Equipment equipment)
+    {
+        editTarget = equipment; // Set the equipment to be edited
+    }
+    private void UpdateEquipment(Equipment equipment)
+    {
+        editTarget = null;
+        SaveEquipmentsToFile(equipments);
     }
     private void DeleteEquipment(Equipment equipment)
     {
         equipments.Remove(equipment);
         SaveEquipmentsToFile(equipments);
+    }
+    private void CancelEdit()
+    {
+        editTarget = null;
     }
 }
